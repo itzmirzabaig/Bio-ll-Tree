@@ -77,25 +77,11 @@ export function Mindmap({ data }: MindmapProps) {
     
     gRef.current = g;
 
-    // Create tree layout
-    const treeLayout = d3.tree<TreeNode>()
-      .size([height * 1.5, width]) // Increase vertical space by 50%
-      .separation((a, b) => {
-        // Calculate actual node widths (matching the rect width calculation)
-        const aWidth = Math.max(140, a.data.name.length * 8 + 32);
-        const bWidth = Math.max(140, b.data.name.length * 8 + 32);
-        
-        // Average width of the two nodes in "node units" (each unit = ~50px)
-        const avgWidth = (aWidth + bWidth) / 100;
-        
-        // Sibling nodes (same parent) need more space, different parents need even more
-        // This ensures nodes at the same level never overlap vertically
-        if (a.parent === b.parent) {
-          return Math.max(3.5, avgWidth * 1.2); // At least 2.5 units apart, more for longer names
-        } else {
-          return Math.max(4.0, avgWidth * 1.5); // Different parents get even more space
-        }
-      });
+    // Helper function to count visible nodes
+    const countVisibleNodes = (node: d3.HierarchyNode<TreeNode>): number => {
+      if (!node.children) return 1;
+      return 1 + node.children.reduce((sum, child) => sum + countVisibleNodes(child), 0);
+    };
 
     // Create hierarchy
     const root = d3.hierarchy(data) as HierarchyNode;
@@ -130,6 +116,31 @@ export function Mindmap({ data }: MindmapProps) {
 
     // Update function
     const update = (source: HierarchyNode) => {
+      // DYNAMIC HEIGHT CALCULATION - recalculates every time nodes expand/collapse
+      const visibleNodeCount = countVisibleNodes(root);
+      const minNodeSpacing = 60; // Minimum 60 pixels between each node vertically
+      const calculatedHeight = Math.max(height * 1.5, visibleNodeCount * minNodeSpacing);
+      
+      // Recreate tree layout with new height
+      const treeLayout = d3.tree<TreeNode>()
+        .size([calculatedHeight, width])
+        .separation((a, b) => {
+          // Calculate actual node widths (matching the rect width calculation)
+          const aWidth = Math.max(140, a.data.name.length * 8 + 32);
+          const bWidth = Math.max(140, b.data.name.length * 8 + 32);
+          
+          // Average width of the two nodes in "node units" (each unit = ~50px)
+          const avgWidth = (aWidth + bWidth) / 100;
+          
+          // Sibling nodes (same parent) need more space, different parents need even more
+          // This ensures nodes at the same level never overlap vertically
+          if (a.parent === b.parent) {
+            return Math.max(2.5, avgWidth * 1.2); // At least 2.5 units apart, more for longer names
+          } else {
+            return Math.max(3.0, avgWidth * 1.5); // Different parents get even more space
+          }
+        });
+
       const treeData = treeLayout(root);
       const nodes = treeData.descendants() as HierarchyNode[];
       const links = treeData.links() as d3.HierarchyLink<TreeNode>[];
