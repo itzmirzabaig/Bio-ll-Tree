@@ -1,0 +1,88 @@
+/* Global styles for the mindmap */
+
+/* Smooth transitions for nodes */
+.node {
+  cursor: pointer;
+}
+
+.node-rect {
+  transition: all 0.2s ease;
+}
+
+.node:hover .node-rect {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) !important;
+  stroke-width: 3px !important;
+}
+
+/* Link styles */
+.link {
+  transition: stroke-width 0.2s ease;
+}
+
+.link:hover {
+  stroke-width: 3px !important;
+  stroke: #64748b !important;
+}
+
+/* Toggle circle animation */
+.toggle-circle {
+  transition: all 0.2s ease;
+}
+
+.node:hover .toggle-circle {
+  transform: scale(1.1);
+}
+
+/* Custom scrollbar for tooltip */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Selection color */
+::selection {
+  background: #3b82f6;
+  color: white;
+}
+
+/* Focus styles */
+button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Prevent text selection on SVG */
+svg {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Animation for node appearance */
+@keyframes nodeAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.node-enter {
+  animation: nodeAppear 0.3s ease-out;
+}
