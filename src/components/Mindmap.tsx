@@ -484,7 +484,7 @@ export function Mindmap({ data }: MindmapProps) {
 
       {/* Title */}
       <div className="absolute top-4 left-4 z-10">
-        <h1 className="text-2xl font-bold text-gray-800">Tree of Life</h1>
+        <h1 className="text-2xl font-bold text-gray-800">Tree of Life ~ Mirza Baig</h1>
         <p className="text-sm text-gray-500">Phylogenetic Classification ~ from the teachings of Dr. Clayton Vondriska</p>
       </div>
 
